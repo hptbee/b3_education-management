@@ -23,6 +23,7 @@ export class CloudDirtyTracker {
       dirty.rewards ||
       dirty.settings ||
       dirty.catalog ||
+      (dirty.attendance ?? false) ||
       dirty.activityIndex ||
       dirty.activityDates.length > 0 ||
       dirty.registry ||
@@ -61,6 +62,7 @@ export class CloudDirtyTracker {
       rewards: true,
       settings: true,
       catalog: true,
+      attendance: true,
       activityIndex: true,
       activityDates: [...activityDates],
       registry: true,
@@ -166,6 +168,7 @@ export function inferDirtyFromDatabaseChange(
     luckyWheelHistory: unknown[];
     duckRaceHistory: unknown[];
     badgeAwardHistory: unknown[];
+    attendanceRecords: unknown[];
   },
 ): Partial<CloudDirtyState> {
   const patch: Partial<CloudDirtyState> = {};
@@ -237,6 +240,10 @@ export function inferDirtyFromDatabaseChange(
 
   if (historyChanged) {
     patch.activityIndex = true;
+  }
+
+  if (!prev || arrayChanged((prev as typeof next).attendanceRecords, next.attendanceRecords)) {
+    patch.attendance = true;
   }
 
   return patch;

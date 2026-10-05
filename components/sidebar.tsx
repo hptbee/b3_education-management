@@ -10,6 +10,7 @@ import {
   Sparkles,
   Trophy,
   History,
+  CalendarCheck,
   School,
   Settings,
   PanelLeft,
@@ -44,6 +45,7 @@ const navSections: NavSection[] = [
     label: 'Lớp học',
     items: [
       { label: 'Học sinh', href: '/students', icon: Users },
+      { label: 'Điểm danh', href: '/attendance', icon: CalendarCheck },
       { label: 'Tổ / Nhóm', href: '/teams', icon: UsersRound },
     ],
   },

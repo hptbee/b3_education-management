@@ -17,6 +17,7 @@ export type CloudSyncDomain =
   | "rewards"
   | "settings"
   | "catalog"
+  | "attendance"
   | "activityIndex"
   | "registry"
   | `activity:${string}`;
@@ -94,6 +95,7 @@ export interface CloudDirtyState {
   rewards: boolean;
   settings: boolean;
   catalog: boolean;
+  attendance: boolean;
   activityIndex: boolean;
   activityDates: string[];
   registry: boolean;
@@ -110,6 +112,7 @@ export function emptyCloudDirtyState(): CloudDirtyState {
     rewards: false,
     settings: false,
     catalog: false,
+    attendance: false,
     activityIndex: false,
     activityDates: [],
     registry: false,

@@ -659,6 +659,32 @@ Separate string-id arrays on the classroom database — do not share bags across
 
 Synced in cloud `catalog.json` with badges and point actions.
 
+## 6.10d Attendance Record
+
+One record per calendar day the teacher takes attendance (local date `YYYY-MM-DD`). Only non-present students are stored in `entries`; present students are inferred from `rosterStudentIds`.
+
+```ts
+type AttendanceAbsenceStatus = "excused" | "unexcused" | "late";
+
+interface AttendanceEntry {
+  studentId: string;
+  status: AttendanceAbsenceStatus;
+  note?: string;
+}
+
+interface AttendanceRecord {
+  id: string;
+  date: string;
+  entries: AttendanceEntry[];
+  rosterStudentIds: string[];
+  note?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+Persisted per classroom as `attendanceRecords`. Cloud backup domain: `attendance.json`. Attendance does not auto-change student points.
+
 ## 6.11 Application Settings
 
 Optional UI preferences may be grouped separately.
@@ -898,6 +924,43 @@ If there are no students:
 - Show a friendly empty state
 - Explain that the teacher can add or import students
 - Provide a clear primary action
+
+---
+
+# FR-003a — Attendance & Weekly/Monthly Summary
+
+## Goal
+
+Let the teacher take daily attendance and review how many days each student was absent by week or month.
+
+## Route
+
+- `/attendance` — two tabs: **Điểm danh** and **Tổng kết** (week or month)
+- Sidebar: section **Lớp học** → **Điểm danh**
+- Home dashboard: **Điểm danh tuần này** widget (school days, absences, late, class rate, top absentees)
+
+## Daily attendance
+
+- One attendance record per local calendar day (`YYYY-MM-DD`) per classroom
+- Statuses: **Có mặt**, **Vắng có phép**, **Vắng không phép**, **Đi muộn**
+- Default all students to **Có mặt**; store only non-present rows in `entries`
+- Snapshot `rosterStudentIds` at save time so students added later are not counted on past days
+- Optional day note and per-student absence note
+- Re-saving the same date updates the existing record (no duplicates)
+- Does not change student points automatically
+
+## Weekly and monthly summary
+
+- Week is Monday–Sunday (`getMondayWeekStart`)
+- Week/month pickers include periods with data plus the current period
+- **School days** = count of attendance records in that period
+- Per student: present, excused, unexcused, late, **absent days** (excused + unexcused), attendance rate
+- Highlight students with **≥ 2 absent days** in the week table and **≥ 3 absent days** in the month table
+- Export the selected period summary to Excel (`.xlsx`)
+
+## Delete student
+
+Remove the student from all `attendanceRecords` `entries` and `rosterStudentIds`; keep day records.
 
 ---
 
@@ -1882,6 +1945,7 @@ Trang chủ (`/`)
 
 Lớp học
 ├── Học sinh (`/students`)
+├── Điểm danh (`/attendance`)
 └── Tổ / Nhóm (`/teams`)
 
 Điểm & quà

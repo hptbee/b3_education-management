@@ -66,6 +66,7 @@ describe("cloud-serializer", () => {
     const split = splitClassroomToCloudFiles(db);
     expect(split.paths).toContain("students.json");
     expect(split.paths).toContain("classroom.json");
+    expect(split.paths).toContain("attendance.json");
     expect(split.paths).toContain("activity/index.json");
 
     const students = split.files["students.json"] as { students: typeof db.students };

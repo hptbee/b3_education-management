@@ -99,6 +99,11 @@ function assertImportShape(data: unknown): asserts data is ClassroomDatabase {
     assertEntityArray(record, "duckRaceHistory", true);
   }
 
+  const attendanceRecords = record.attendanceRecords;
+  if (attendanceRecords !== undefined && attendanceRecords !== null) {
+    assertEntityArray(record, "attendanceRecords", true);
+  }
+
   const wheelBag = record.wheelStudentBag;
   if (!Array.isArray(wheelBag)) {
     throw new Error('Định dạng file không hợp lệ: thiếu hoặc sai kiểu mảng "wheelStudentBag".');
@@ -270,6 +275,7 @@ export class DatabaseService {
         newDb.luckyWheelHistory = parsed.luckyWheelHistory || [];
         newDb.duckRaceHistory = parsed.duckRaceHistory || [];
         newDb.badgeAwardHistory = parsed.badgeAwardHistory || [];
+        newDb.attendanceRecords = parsed.attendanceRecords || [];
         newDb.wheelStudentBag = parsed.wheelStudentBag || [];
         newDb.duckRaceStudentBag = parsed.duckRaceStudentBag || [];
         newDb.pointsWheelConfig = parsed.pointsWheelConfig;

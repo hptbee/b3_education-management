@@ -4,6 +4,7 @@ import { TopBanner } from '@/components/dashboard/top-banner'
 import { StudentList } from '@/components/dashboard/student-list'
 import { Leaderboard } from '@/components/dashboard/leaderboard'
 import { TeamCompetition } from '@/components/dashboard/team-competition'
+import { AttendanceWeekOverview } from '@/components/dashboard/attendance-week-overview'
 import { RecentPraise } from '@/components/dashboard/recent-praise'
 import { RecentActivity } from '@/components/dashboard/recent-activity'
 import { FeaturedGifts } from '@/components/dashboard/featured-gifts'
@@ -29,14 +30,18 @@ export default function Home() {
           </AnimatedEntrance>
         </div>
 
+        <AnimatedEntrance variant="random" staggerIndex={4}>
+          <AttendanceWeekOverview />
+        </AnimatedEntrance>
+
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-          <AnimatedEntrance variant="random" staggerIndex={4}>
+          <AnimatedEntrance variant="random" staggerIndex={5}>
             <RecentPraise />
           </AnimatedEntrance>
-          <AnimatedEntrance variant="random" staggerIndex={5}>
+          <AnimatedEntrance variant="random" staggerIndex={6}>
             <RecentActivity />
           </AnimatedEntrance>
-          <AnimatedEntrance variant="random" staggerIndex={6}>
+          <AnimatedEntrance variant="random" staggerIndex={7}>
             <FeaturedGifts />
           </AnimatedEntrance>
         </div>

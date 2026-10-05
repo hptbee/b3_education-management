@@ -205,6 +205,7 @@ export async function uploadStructuredMigration(
     rewards: true,
     settings: true,
     catalog: true,
+    attendance: true,
     activityIndex: true,
     activityDates: [],
     registry: true,
