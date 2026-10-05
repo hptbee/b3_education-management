@@ -1,5 +1,6 @@
 import type {
   AppSettings,
+  AttendanceRecord,
   Badge,
   BadgeAwardHistory,
   ClassroomRole,
@@ -48,6 +49,7 @@ export interface ClassroomDatabase {
   luckyWheelHistory: LuckyWheelSelection[];
   duckRaceHistory: DuckRaceResult[];
   badgeAwardHistory: BadgeAwardHistory[];
+  attendanceRecords: AttendanceRecord[];
   wheelStudentBag: string[];
   duckRaceStudentBag: string[];
   pointsWheelConfig: PointsWheelSegment[];

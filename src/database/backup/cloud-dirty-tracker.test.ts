@@ -58,6 +58,28 @@ describe("inferDirtyFromDatabaseChange", () => {
     expect(inferDirtyFromDatabaseChange(prev, next).students).toBe(true);
   });
 
+  it("marks attendance dirty when attendanceRecords change", () => {
+    const prev = createEmptyDatabase({
+      className: "2/7",
+      schoolYear: "2026-2027",
+      teacher: { id: "t1", name: "Teacher", createdAt: "2026-01-01", updatedAt: "2026-01-01" },
+    });
+    const next = {
+      ...prev,
+      attendanceRecords: [
+        {
+          id: "att1",
+          date: "2026-03-10",
+          entries: [],
+          rosterStudentIds: [],
+          createdAt: "2026-03-10T08:00:00.000Z",
+          updatedAt: "2026-03-10T08:00:00.000Z",
+        },
+      ],
+    };
+    expect(inferDirtyFromDatabaseChange(prev, next).attendance).toBe(true);
+  });
+
   it("marks catalog dirty when wheelStudentBag membership changes at same length", () => {
     const prev = createEmptyDatabase({
       className: "2/7",

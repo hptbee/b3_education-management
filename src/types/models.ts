@@ -190,6 +190,29 @@ export interface BadgeAwardHistory {
   createdAt: string;
 }
 
+export type AttendanceAbsenceStatus = "excused" | "unexcused" | "late";
+
+export interface AttendanceEntry {
+  studentId: string;
+  status: AttendanceAbsenceStatus;
+  /** Lý do nghỉ / ghi chú ngắn */
+  note?: string;
+}
+
+/** Một bản ghi cho mỗi ngày đã điểm danh. */
+export interface AttendanceRecord {
+  id: string;
+  /** Khóa ngày local `YYYY-MM-DD` — duy nhất trong một lớp */
+  date: string;
+  /** Chỉ chứa học sinh KHÔNG có mặt; phần còn lại của roster là có mặt */
+  entries: AttendanceEntry[];
+  /** Danh sách HS tại thời điểm điểm danh — để HS vào lớp sau không bị tính vào ngày cũ */
+  rosterStudentIds: string[];
+  note?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppSettings {
   soundEnabled: boolean;
   animationsEnabled: boolean;
@@ -242,6 +265,7 @@ export interface AppData {
   luckyWheelHistory: LuckyWheelSelection[];
   duckRaceHistory: DuckRaceResult[];
   badgeAwardHistory: BadgeAwardHistory[];
+  attendanceRecords: AttendanceRecord[];
   wheelStudentBag: string[];
   /** Prevent-repeat pool for Đua vịt — separate from Lucky Wheel. */
   duckRaceStudentBag: string[];

@@ -36,6 +36,7 @@ const DOMAIN_PATHS = {
   rewards: "rewards.json",
   settings: "settings.json",
   catalog: "catalog.json",
+  attendance: "attendance.json",
   manifest: "manifest.json",
   activityIndex: "activity/index.json",
 } as const;
@@ -201,6 +202,9 @@ export function splitClassroomToCloudFiles(
       pointsWheelConfig: normalized.pointsWheelConfig,
       pointsWheelStudentBag: normalized.pointsWheelStudentBag,
       seatingChartConfig: normalized.seatingChartConfig,
+    }),
+    [DOMAIN_PATHS.attendance]: wrapFile(updatedAt, {
+      attendanceRecords: normalized.attendanceRecords ?? [],
     }),
     [DOMAIN_PATHS.activityIndex]: buildActivityIndex(activities, updatedAt),
   };
@@ -419,6 +423,11 @@ export function mergeCloudFilesToClassroom(files: Record<string, string>): Class
           cloudBackupEnabled: false,
         },
       };
+  const attendanceFile = files[DOMAIN_PATHS.attendance]
+    ? parseJsonFile<{ attendanceRecords: ClassroomDatabase["attendanceRecords"] }>(
+        files[DOMAIN_PATHS.attendance],
+      )
+    : { attendanceRecords: [] };
   const catalogFile = files[DOMAIN_PATHS.catalog]
     ? parseJsonFile<{
         badges: ClassroomDatabase["badges"];
@@ -474,6 +483,7 @@ export function mergeCloudFilesToClassroom(files: Record<string, string>): Class
     pointsWheelStudentBag: catalogFile.pointsWheelStudentBag ?? [],
     seatingChartConfig: normalizeSeatingChartConfig(catalogFile.seatingChartConfig),
     teamScoreHistory: history.teamScoreHistory,
+    attendanceRecords: attendanceFile.attendanceRecords ?? [],
     appSettings: settingsFile.appSettings,
   };
 
@@ -499,6 +509,7 @@ export function domainsFromDirty(dirty: {
   rewards?: boolean;
   settings?: boolean;
   catalog?: boolean;
+  attendance?: boolean;
   activityIndex?: boolean;
   activityDates?: string[];
   registry?: boolean;
@@ -512,6 +523,7 @@ export function domainsFromDirty(dirty: {
   if (dirty.rewards) domains.push("rewards");
   if (dirty.settings) domains.push("settings");
   if (dirty.catalog) domains.push("catalog");
+  if (dirty.attendance) domains.push("attendance");
   if (dirty.activityIndex) domains.push("activityIndex");
   for (const date of dirty.activityDates ?? []) {
     domains.push(`activity:${date}`);

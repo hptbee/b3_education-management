@@ -1,11 +1,17 @@
 import type { HTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-export function ClassroomCard({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+interface ClassroomCardProps extends HTMLAttributes<HTMLDivElement> {
+  /** Hover/press lift. Off for dense forms so clicking a child does not move the whole panel. */
+  lift?: boolean
+}
+
+export function ClassroomCard({ className, lift = true, ...props }: ClassroomCardProps) {
   return (
     <div
       className={cn(
-        'ui-card-lift rounded-3xl border border-sky-100 bg-white p-5 shadow-sm',
+        'rounded-3xl border border-sky-100 bg-white p-5 shadow-sm',
+        lift && 'ui-card-lift',
         className,
       )}
       {...props}

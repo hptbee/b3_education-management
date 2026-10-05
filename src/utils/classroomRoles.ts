@@ -137,6 +137,7 @@ export function normalizeClassroomDatabase(db: ClassroomDatabase): ClassroomData
         luckyWheelHistory: db.luckyWheelHistory ?? [],
         duckRaceHistory: db.duckRaceHistory ?? [],
         badgeAwardHistory: db.badgeAwardHistory ?? [],
+        attendanceRecords: db.attendanceRecords ?? [],
         wheelStudentBag: db.wheelStudentBag ?? [],
         duckRaceStudentBag: db.duckRaceStudentBag ?? [],
         pointsWheelConfig: normalizePointsWheelConfig(db.pointsWheelConfig),

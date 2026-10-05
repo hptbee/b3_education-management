@@ -53,6 +53,7 @@ function minimalDb(rewards: ClassroomDatabase["rewards"], students: Student[] = 
     luckyWheelHistory: [],
     duckRaceHistory: [],
     badgeAwardHistory: [],
+    attendanceRecords: [],
     wheelStudentBag: [],
     duckRaceStudentBag: [],
     pointsWheelConfig: DEFAULT_POINTS_WHEEL_SEGMENTS.map((s) => ({ ...s })),

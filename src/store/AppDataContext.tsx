@@ -17,6 +17,7 @@ import type {
   Team,
   TeamScoreHistory,
   AppSettings,
+  AttendanceEntry,
 } from "../types/models";
 import { createId } from "../utils/id";
 import {
@@ -57,6 +58,7 @@ import {
   inferDirtyFromDatabaseChange,
 } from "../database/backup/cloud-dirty-tracker";
 import { isCloudRestoreInProgress } from "../database/backup/cloud-restore-gate";
+import { deleteAttendanceByDate, upsertAttendanceRecord } from "../utils/attendance";
 import { toastError, toastSuccess } from "../utils/toast";
 import { logAppEvent, logCloudTrace } from "../logging/app-log";
 import { useAuth } from "./AuthContext";
@@ -147,6 +149,8 @@ interface AppDataContextValue {
     winnerIds?: string[];
     participantIds: string[];
   }) => void;
+  saveAttendance: (input: { date: string; entries: AttendanceEntry[]; note?: string }) => Promise<void>;
+  deleteAttendance: (date: string) => Promise<void>;
   persistNow: () => Promise<boolean>;
   markDirtyAsset: (assetKey: string) => void;
   /** Bumps when account registry merge changes local classroom list. */
@@ -1099,6 +1103,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
             })
             .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 
+          const attendanceRecords = (prev.attendanceRecords ?? []).map((record) => ({
+            ...record,
+            rosterStudentIds: record.rosterStudentIds.filter((id) => id !== studentId),
+            entries: record.entries.filter((entry) => entry.studentId !== studentId),
+          }));
+
           return {
             ...prev,
             students: prev.students.filter((item) => item.id !== studentId),
@@ -1109,6 +1119,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
             luckyWheelHistory,
             duckRaceHistory,
             badgeAwardHistory,
+            attendanceRecords,
             wheelStudentBag: prev.wheelStudentBag.filter((id) => id !== studentId),
             duckRaceStudentBag: (prev.duckRaceStudentBag ?? []).filter((id) => id !== studentId),
             pointsWheelStudentBag: (prev.pointsWheelStudentBag ?? []).filter((id) => id !== studentId),
@@ -1467,6 +1478,42 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
             duckRaceHistory: [entry, ...(current.duckRaceHistory ?? [])],
           };
         });
+      },
+      saveAttendance: async ({ date, entries, note }) => {
+        if (!date) return;
+        const current = dataRef.current;
+        if (!current) return;
+        const now = new Date().toISOString();
+        const rosterStudentIds = current.students.map((student) => student.id);
+        commitData({
+          ...current,
+          metadata: { ...current.metadata, updatedAt: now },
+          attendanceRecords: upsertAttendanceRecord(current.attendanceRecords ?? [], {
+            date,
+            entries,
+            rosterStudentIds,
+            note,
+          }),
+        });
+        const persisted = await persistNow();
+        if (!persisted) {
+          throw new Error("Không thể lưu điểm danh. Vui lòng thử lại.");
+        }
+        toastSuccess("Đã lưu điểm danh");
+      },
+      deleteAttendance: async (date) => {
+        if (!date) return;
+        const current = dataRef.current;
+        if (!current) return;
+        commitData({
+          ...current,
+          metadata: { ...current.metadata, updatedAt: new Date().toISOString() },
+          attendanceRecords: deleteAttendanceByDate(current.attendanceRecords ?? [], date),
+        });
+        const persisted = await persistNow();
+        if (!persisted) {
+          throw new Error("Không thể xóa điểm danh. Vui lòng thử lại.");
+        }
       },
       persistNow,
       markDirtyAsset,

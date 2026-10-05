@@ -64,6 +64,7 @@ function minimalDb(overrides?: Partial<ClassroomDatabase>): ClassroomDatabase {
     luckyWheelHistory: [],
     duckRaceHistory: [],
     badgeAwardHistory: [],
+    attendanceRecords: [],
     wheelStudentBag: [],
     duckRaceStudentBag: [],
     pointsWheelConfig: DEFAULT_POINTS_WHEEL_SEGMENTS.map((s) => ({ ...s })),

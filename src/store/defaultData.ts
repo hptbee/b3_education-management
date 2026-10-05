@@ -157,6 +157,7 @@ export const defaultData: AppData = {
   luckyWheelHistory: [],
   duckRaceHistory: [],
   badgeAwardHistory: [],
+  attendanceRecords: [],
   wheelStudentBag: [],
   duckRaceStudentBag: [],
   pointsWheelConfig: DEFAULT_POINTS_WHEEL_SEGMENTS.map((segment) => ({ ...segment })),
